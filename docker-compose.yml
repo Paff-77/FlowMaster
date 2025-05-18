@@ -2,7 +2,7 @@ version: '3'
 
 services:
   flowmaster:
-    build: .
+    image: sumirepaff/flowmaster:latest
     container_name: flowmaster
     restart: always
     ports:
