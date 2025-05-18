@@ -36,8 +36,89 @@ FlowMaster 是一个基于 vnstat 的专业网络流量监控系统，提供实�
 | Node.js | 14.0.0 或更高版本 |
 | vnstat | 2.0.0 或更高版本 |
 | 包管理器 | npm 或 yarn |
+| Docker (可选) | 20.10.0 或更高版本 |
+| Docker Compose (可选) | 2.0.0 或更高版本 |
 
-### 一键部署
+### Docker 部署
+
+#### 方法一：使用预构建的 Docker 镜像（推荐）
+
+创建 `docker-compose.yml` 文件：
+
+```yaml
+version: '3'
+
+services:
+  flowmaster:
+    image: vbskycn/flowmaster:latest
+    container_name: flowmaster
+    restart: always
+    ports:
+      - "10089:10089"
+    volumes:
+      - vnstat_data:/var/lib/vnstat
+    network_mode: "host" # 使用主机网络模式以便监控主机网络接口
+    privileged: true # 使用特权模式以获取网络接口信息
+
+volumes:
+  vnstat_data:
+```
+
+然后运行：
+
+```bash
+docker-compose up -d
+```
+
+#### 方法二：从源码构建 Docker 镜像
+
+##### 1. 克隆项目
+
+```bash
+git clone https://github.com/vbskycn/FlowMaster.git
+cd FlowMaster
+```
+
+##### 2. 使用 Docker Compose 构建并启动
+
+```bash
+docker-compose up -d
+```
+
+这将自动构建Docker镜像并在后台启动容器。
+
+#### 3. 访问服务
+
+安装完成后，通过浏览器访问：`http://服务器IP:10089`
+
+> 注意：请确保防火墙已放行 10089 端口
+
+#### 4. 查看容器日志
+
+```bash
+docker logs flowmaster
+```
+
+#### 5. 停止服务
+
+```bash
+docker-compose down
+```
+
+#### 6. 更新服务
+
+```bash
+# 进入项目目录
+cd FlowMaster
+
+# 拉取最新代码
+git pull
+
+# 重新构建并启动
+docker-compose up -d --build
+```
+
+### 一键部署（传统方式）
 
 ```bash
 curl -o install.sh https://raw.githubusercontent.com/vbskycn/FlowMaster/main/install.sh && chmod +x install.sh && sudo ./install.sh
@@ -45,7 +126,7 @@ curl -o install.sh https://raw.githubusercontent.com/vbskycn/FlowMaster/main/ins
 
 国内机器
 不行自己换加速地址
-```
+```bash
 curl -o install.sh https://gh-proxy.com/https://raw.githubusercontent.com/vbskycn/FlowMaster/main/install.sh && chmod +x install.sh && sudo ./install.sh
 ```
 
@@ -159,13 +240,11 @@ pm2 monit
 
 #### 7.更新脚本
 
-```
+```bash
 cd FlowMaster #进入脚本目录
 git pull #更新仓库
-pm2 restart flowmaster进程 #重进flowmaster进程
+pm2 restart flowmaster #重启flowmaster进程
 ```
-
-
 
 ### 🔧 配置说明
 
@@ -232,7 +311,4 @@ pm2 start ecosystem.config.js
 
 ---
 
-如果这个项目对你有帮助，欢迎 star ⭐️
-
-
-
+如果这个项目对你有帮助，欢迎 star ⭐️ 

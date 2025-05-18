@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  flowmaster:
+    build: .
+    container_name: flowmaster
+    restart: always
+    ports:
+      - "10089:10089"
+    volumes:
+      - vnstat_data:/var/lib/vnstat
+    network_mode: "host" # 使用主机网络模式以便监控主机网络接口
+    privileged: true # 使用特权模式以获取网络接口信息
+
+volumes:
+  vnstat_data: 
